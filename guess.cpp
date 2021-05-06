@@ -15,14 +15,14 @@ private:
     std::vector<std::string> words;
     std::string wrong{};
     std::string correct{};
-    int randomNumber{};
+    std::string randomString{};
     char guess{};
     std::string warning{};
     unsigned int left{};
     int chance{};
     std::string file{};
 public:
-    Player () : words(1042)
+    Player ()
     {
         getWords ();
         getIndentity ();
@@ -30,9 +30,9 @@ public:
         reset ();
     }
 
-    void getRandomNumber()
+    void getRandomString()
     {
-        randomNumber = std::rand ()%words.size ();
+        randomString = words[std::rand ()%words.size ()];
     }
 
     void getChar(std::string text)
@@ -52,11 +52,11 @@ public:
             std::cout << "[] ";
         std::cout << "\n---------------------------\n\n";
         std::cout << "  ";
-        for (unsigned int i=0;i<words[randomNumber].size ();++i)
+        for (unsigned int i=0;i<randomString.size ();++i)
         {
-            if (correct.find(words[randomNumber][i])<correct.size())
+            if (correct.find(randomString[i])<correct.size())
             {
-                std::cout << static_cast<char>(std::toupper(words[randomNumber][i])) << " ";
+                std::cout << static_cast<char>(std::toupper(randomString[i])) << " ";
                 ++left;
             }else
             {
@@ -70,14 +70,14 @@ public:
     {
         wrong = "";
         correct = "";
-        getRandomNumber ();
+        getRandomString ();
         guess = '\0';
         left = 0;
         chance = 5;
     }
     void checks ()
     {
-        if (words[randomNumber].find(guess)<words[randomNumber].size() && correct.find(guess)>=correct.size())
+        if (randomString.find(guess)<randomString.size() && correct.find(guess)>=correct.size())
         {
             correct.push_back (guess);
         }else if (correct.find(guess)<correct.size() || wrong.find(guess)<wrong.size())
@@ -95,16 +95,16 @@ public:
     bool iswin ()
     {
         
-        if (words[randomNumber].size()==left)
+        if (randomString.size()==left)
         {
-            std::cout << "congratulation player [" << name << "] you have won\n";
+            std::cout << "congratulation player [" << name << "] you have won\n" << randomString << "\n";
             std::ofstream ss (file);
             ss << ++score;
             ss.close ();
             return true;
         }else if (chance<=0)
         {
-            std::cout << "player [" << name << "] you lost, the answer is [" << words[randomNumber] << "], you are really a dumbass\n";
+            std::cout << "player [" << name << "] you lost, the answer is [" << randomString << "], you are really a dumbass\n";
             return true;
         }
         return false;
@@ -189,7 +189,6 @@ int main ()
     display.menu (player);
     bool play = display.check ();
     bool win = false;
-    player.getRandomNumber ();
     while (play)
     {
         player.checks ();
